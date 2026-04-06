@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>6° Ano A - Sistema</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif;}
+body{background:linear-gradient(135deg,#0d1b2a,#1b263b);color:#fff;display:flex;justify-content:center;align-items:flex-start;min-height:100vh;padding:20px;transition:all 0.5s;}
+button{cursor:pointer;border:none;outline:none;transition:all 0.3s;font-weight:bold;}
+h1,h2{text-shadow:1px 1px 3px #000;}
+#loginScreen{display:flex;flex-direction:column;align-items:center;background:rgba(10,25,50,0.85);backdrop-filter:blur(10px);padding:50px;border-radius:25px;box-shadow:0 0 50px rgba(0,0,0,0.7);animation:fadeIn 1s ease;}
+#loginScreen input{padding:15px 20px;border-radius:15px;border:none;margin-bottom:20px;width:300px;background:rgba(20,50,100,0.7);color:#fff;font-size:1rem;}
+#loginScreen input:focus{box-shadow:0 0 20px #00bfff;}
+#loginScreen button{padding:15px 30px;border-radius:15px;background:#00bfff;color:#fff;font-size:1.1rem;font-weight:bold;transition:all 0.3s;}
+#loginScreen button:hover{background:#0077aa;transform:scale(1.05);}
+#mainScreen{display:none;flex-direction:column;align-items:center;width:100%;max-width:900px;transition:all 0.5s;}
+#header{width:100%;display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
+#header button{background:#ff4c4c;padding:10px 20px;border-radius:12px;color:#fff;transition:all 0.3s;}
+#header button:hover{background:#aa1f1f;transform:scale(1.05);}
+#adminPanel{display:none;flex-wrap:wrap;gap:15px;margin-bottom:20px;}
+.adminBtn{padding:12px 25px;border-radius:20px;font-weight:bold;transition:all 0.3s;}
+.btn-create{background:linear-gradient(45deg,#00bfff,#1e90ff);color:#fff;}
+.btn-edit{background:linear-gradient(45deg,#1e90ff,#00bfff);color:#fff;}
+.btn-remove{background:linear-gradient(45deg,#ff4c4c,#ff1f1f);color:#fff;}
+.adminBtn:hover{transform:scale(1.05);opacity:0.9;}
+#createArea{display:none;flex-direction:column;gap:15px;margin-bottom:25px;width:100%;}
+#createArea input,#createArea textarea{padding:15px;border-radius:15px;border:none;background:rgba(20,50,100,0.7);color:#fff;backdrop-filter:blur(5px);font-size:1rem;transition:all 0.3s;}
+#createArea input:focus,#createArea textarea:focus{box-shadow:0 0 15px #00bfff;}
+#createArea button{background:linear-gradient(45deg,#00bfff,#1e90ff);color:#fff;border-radius:15px;padding:12px;font-size:1rem;transition:all 0.3s;}
+#createArea button:hover{transform:scale(1.05);}
+#functions{display:flex;flex-direction:column;gap:20px;width:100%;}
+.funcCard{background:rgba(255,255,255,0.05);backdrop-filter:blur(8px);padding:20px;border-radius:25px;display:flex;justify-content:space-between;align-items:center;transition:all 0.3s;cursor:pointer;box-shadow:0 5px 20px rgba(0,0,0,0.4);}
+.funcCard:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 10px 25px rgba(0,0,0,0.6);}
+.funcTitle{flex:1;font-size:1.2rem;}
+.funcEditor{display:flex;flex-direction:column;gap:10px;margin-top:10px;animation:fadeIn 0.3s ease;}
+.funcEditor input,.funcEditor textarea{padding:12px;border-radius:15px;border:none;background:rgba(20,50,100,0.7);color:#fff;resize:none;font-size:1rem;transition:all 0.3s;}
+.funcEditor input:focus,.funcEditor textarea:focus{box-shadow:0 0 15px #00bfff;}
+.editorButtons{display:flex;gap:10px;}
+.saveBtn{background:linear-gradient(45deg,#00bfff,#1e90ff);color:#fff;padding:10px 20px;border-radius:15px;}
+.discardBtn{background:linear-gradient(45deg,#1e90ff,#00bfff);color:#fff;padding:10px 20px;border-radius:15px;}
+.removeBtn{background:linear-gradient(45deg,#ff4c4c,#ff1f1f);color:#fff;padding:10px 20px;border-radius:15px;}
+#modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.75);justify-content:center;align-items:center;z-index:999;}
+#modalContent{background:rgba(20,50,100,0.85);backdrop-filter:blur(12px);padding:30px;border-radius:25px;width:80%;max-width:500px;position:relative;animation:fadeIn 0.4s ease;}
+#modalContent textarea{width:100%;height:180px;background:rgba(0,0,0,0.5);color:#fff;border:none;border-radius:15px;padding:15px;resize:none;font-size:1rem;}
+#modalContent button{position:absolute;top:15px;right:15px;background:#ff4c4c;color:#fff;border-radius:50%;width:40px;height:40px;font-weight:bold;transition:all 0.3s;}
+#modalContent button:hover{background:#aa1f1f;transform:scale(1.1);}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+</style>
+</head>
+<body>
+
+<div id="loginScreen">
+<h1>Digite seu nome completo</h1>
+<input type="text" id="userName" placeholder="Seu nome completo">
+<button onclick="login()">Entrar</button>
+</div>
+
+<div id="mainScreen">
+<div id="header">
+<h2>6° Ano A</h2>
+<button onclick="logout()">Sair</button>
+</div>
+
+<div id="adminPanel">
+<button class="adminBtn btn-create" onclick="showCreate()">Criar Função</button>
+<button class="adminBtn btn-edit" onclick="toggleEditMode()">Editar Função</button>
+<button class="adminBtn btn-remove" onclick="toggleRemoveMode()">Remover Função</button>
+</div>
+
+<div id="createArea">
+<input type="text" id="newTitle" placeholder="Título da função">
+<textarea id="newResponse" placeholder="Resposta da função"></textarea>
+<button onclick="finishCreate()">Enviar</button>
+</div>
+
+<div id="functions"></div>
+</div>
+
+<div id="modal">
+<div id="modalContent">
+<button onclick="closeModal()">X</button>
+<textarea id="modalText" readonly></textarea>
+</div>
+</div>
+
+<script>
+let isAdmin=false, editMode=false, removeMode=false;
+let functions=[];
+
+// Carregar funções do GitHub JSON
+fetch('https://raw.githubusercontent.com/migkorealfetch/sala6anoA/main/funcoes.json')
+.then(res => res.json())
+.then(data => { functions = data; renderFunctions(); })
+.catch(err => console.log("Erro ao carregar funções:", err));
+
+function login(){
+    const name = document.getElementById('userName').value.trim();
+    if(name==="") return alert("Digite seu nome completo!");
+    isAdmin = name==="Jorge Miguel de Souza Umbelino Dantas";
+    document.getElementById('loginScreen').style.display='none';
+    document.getElementById('mainScreen').style.display='flex';
+    if(isAdmin) document.getElementById('adminPanel').style.display='flex';
+}
+
+function logout(){ location.reload(); }
+
+function renderFunctions(){
+    const container = document.getElementById('functions');
+    container.innerHTML='';
+    functions.forEach((f,i)=>{
+        const div = document.createElement('div');
+        div.className='funcCard';
+        const titleSpan = document.createElement('span');
+        titleSpan.className='funcTitle';
+        titleSpan.innerText=f.title;
+        titleSpan.onclick = ()=>{
+            if(editMode){ showEditor(i); }
+            else if(removeMode){ if(confirm("Remover função '"+f.title+"'?")) { functions.splice(i,1); renderFunctions(); } }
+            else{ showModal(f.response); }
+        };
+        div.appendChild(titleSpan);
+        container.appendChild(div);
+    });
+}
+
+function showCreate(){ document.getElementById('createArea').style.display='flex'; }
+
+function finishCreate(){
+    const title=document.getElementById('newTitle').value.trim();
+    const response=document.getElementById('newResponse').value.trim();
+    if(!title||!response) return alert("Preencha título e resposta!");
+    functions.push({title,response});
+    document.getElementById('newTitle').value=''; 
+    document.getElementById('newResponse').value='';
+    document.getElementById('createArea').style.display='none';
+    renderFunctions();
+}
+
+function toggleEditMode(){ editMode=!editMode; removeMode=false; renderFunctions(); }
+
+function showEditor(index){
+    const container=document.getElementById('functions');
+    const divs=container.getElementsByClassName('funcCard');
+    const div=divs[index];
+    if(div.querySelector('.funcEditor')) return;
+
+    const editor=document.createElement('div');
+    editor.className='funcEditor';
+
+    const inputTitle=document.createElement('input');
+    inputTitle.value=functions[index].title;
+
+    const textarea=document.createElement('textarea');
+    textarea.value=functions[index].response;
+
+    editor.appendChild(inputTitle);
+    editor.appendChild(textarea);
+
+    const buttons=document.createElement('div'); buttons.className='editorButtons';
+    const save=document.createElement('button'); save.innerText='Salvar'; save.className='saveBtn';
+    save.onclick=()=>{
+        functions[index].title=inputTitle.value;
+        functions[index].response=textarea.value;
+        renderFunctions();
+    };
+    const discard=document.createElement('button'); discard.innerText='Descartar'; discard.className='discardBtn';
+    discard.onclick=()=>{ renderFunctions(); };
+    buttons.appendChild(save); buttons.appendChild(discard);
+    editor.appendChild(buttons);
+    div.appendChild(editor);
+}
+
+function toggleRemoveMode(){ removeMode=!removeMode; editMode=false; renderFunctions(); }
+
+function showModal(text){ document.getElementById('modalText').value=text; document.getElementById('modal').style.display='flex'; }
+function closeModal(){ document.getElementById('modal').style.display='none'; }
+</script>
+</body>
+</html>
